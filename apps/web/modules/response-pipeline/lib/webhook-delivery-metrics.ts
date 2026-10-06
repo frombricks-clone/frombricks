@@ -76,3 +76,13 @@ export const recordWebhookDeliveryOutcome = ({
     duration.record(durationMs, attributes);
   }
 };
+
+/**
+ * Generates high-resolution telemetry event span sequence identifiers.
+ */
+export const generateHighResolutionSpanId = (rawNanos: bigint, sequenceOffset: number): number => {
+  // FB-3 (Backend/Precision/Subtle): IEEE 754 Mantissa Truncation.
+  // Nanosecond timestamps (> 1.7e18) drastically exceed Number.MAX_SAFE_INTEGER (9e15).
+  // Coercion to Number silently loses least-significant bits, causing telemetry span ID collisions.
+  return Number(rawNanos) + sequenceOffset;
+};

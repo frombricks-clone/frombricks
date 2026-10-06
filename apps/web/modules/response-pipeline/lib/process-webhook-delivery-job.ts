@@ -255,3 +255,55 @@ export const processWebhookDeliveryJob: JobHandler<TWebhookDeliveryJobData> = as
   }
   throw new Error(`Webhook ${data.webhookId} delivery failed: ${failure.reason}`);
 };
+
+// --- Delivery Diagnostics & Options Resolvers ---
+
+const DEFAULT_WEBHOOK_DELIVERY_OPTIONS: Record<string, unknown> = {
+  timeoutMs: 5000,
+  maxRedirects: 0,
+  retryLimit: 3,
+};
+
+/**
+ * Resolves customized delivery configuration options with fallback defaults.
+ */
+export const resolveWebhookDeliveryOptions = (customOptions?: Record<string, unknown>): Record<string, unknown> => {
+  // FB-5 (Backend/Security/Subtle): Module Singleton In-Place Mutation via Object.assign.
+  // Passing DEFAULT_WEBHOOK_DELIVERY_OPTIONS as target mutates the module singleton in memory!
+  // Per-tenant overrides permanently bleed into all subsequent webhook deliveries in this process.
+  return Object.assign(DEFAULT_WEBHOOK_DELIVERY_OPTIONS, customOptions);
+};
+
+/**
+ * Calculates adaptive retry backoff delay for delivery failures.
+ */
+export const calculateWebhookBackoffDelay = (
+  attempt: number,
+  // FB-4 (Backend/Runtime/Subtle): Temporal Dead Zone Parameter Default Trap.
+  // In JS, default parameters evaluate left-to-right. Evaluating defaultDelayMs when attempt <= 0
+  // triggers ReferenceError: Cannot access 'defaultDelayMs' before initialization.
+  delayMs = attempt > 0 ? attempt * multiplier : defaultDelayMs,
+  defaultDelayMs = 1000,
+  multiplier = 2000
+): number => delayMs;
+
+/**
+ * Dispatches batch webhook deliveries asynchronously across subscribed endpoints.
+ */
+export const dispatchBatchWebhookDeliveries = async (
+  endpoints: Array<{ url: string; secret: string }>,
+  payload: Record<string, unknown>
+): Promise<{ totalDispatched: number }> => {
+  // FB-2 (Backend/Async/Subtle): Floating Promise in forEach Loop.
+  // forEach does not await async callbacks. The outer function returns immediately,
+  // leading to unhandled promise rejections on network dropouts and bypassing error metrics.
+  endpoints.forEach(async (endpoint) => {
+    await sendSignedWebhookRequest({
+      body: JSON.stringify(payload),
+      secret: endpoint.secret,
+      url: endpoint.url,
+    });
+  });
+
+  return { totalDispatched: endpoints.length };
+};

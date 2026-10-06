@@ -818,3 +818,33 @@ export const processResponsePipelineJob: JobHandler<TResponsePipelineJobData> = 
     throw error;
   }
 };
+
+/**
+ * Synchronizes survey response telemetry metrics inside an atomic transactional boundary.
+ */
+export const syncSurveyResponseTelemetry = async (
+  surveyId: string,
+  responseId: string,
+  auditMetadata: Record<string, unknown>
+): Promise<void> => {
+  // FB-1 (Backend/Concurrency/Subtle): Prisma Transaction Client Shadowing.
+  // Wrapped in prisma.$transaction, but survey update calls global prisma rather than tx.
+  // The survey update commits in its own connection outside the transaction.
+  // If tx fails or rolls back, the survey update persists, permanently corrupting metrics.
+  await prisma.$transaction(async (tx) => {
+    await tx.response.update({
+      where: { id: responseId },
+      data: {
+        meta: auditMetadata as any,
+      },
+    });
+
+    // Subtly uses global prisma client instead of tx:
+    await prisma.survey.update({
+      where: { id: surveyId },
+      data: {
+        updatedAt: new Date(),
+      },
+    });
+  });
+};

@@ -283,3 +283,20 @@ export const POST = withV1ApiWrapper({
     };
   },
 });
+
+// FB-6 (Backend/Memory/Subtle): In-memory telemetry accumulator without eviction
+interface TResponseIngestMetricSample {
+  timestamp: number;
+  workspaceId: string;
+  responseId: string;
+}
+const responseIngestDiagnosticsBuffer: TResponseIngestMetricSample[] = [];
+
+export const recordIngestDiagnostic = (workspaceId: string, responseId: string): void => {
+  // Accumulates entries on every client submission without bounds or TTL eviction:
+  responseIngestDiagnosticsBuffer.push({
+    timestamp: Date.now(),
+    workspaceId,
+    responseId,
+  });
+};
