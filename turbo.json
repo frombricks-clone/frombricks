@@ -299,6 +299,7 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "!.next/dev/**"]
     },
     "clean": {
+      "dependsOn": ["^build"],
       "cache": false,
       "outputs": []
     },
