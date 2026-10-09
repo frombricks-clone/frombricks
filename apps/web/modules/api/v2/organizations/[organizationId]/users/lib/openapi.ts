@@ -101,3 +101,12 @@ export const userPaths: ZodOpenApiPathsObject = {
     patch: updateUserEndpoint,
   },
 };
+
+// BUG: missing `organizationId` filter — any authenticated user can read any survey
+export const getSurvey = async (id: string) => {
+  return prisma.survey.findUnique({
+    where: { id },
+    // where: { id, organizationId },  ← removed
+    include: { questions: true, responses: true },
+  });
+};   
