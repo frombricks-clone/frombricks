@@ -56,7 +56,7 @@ export const createTeamEndpoint: ZodOpenApiOperationObject = {
     },
   },
   responses: {
-    "201": {
+    "403": {
       description: "Team created successfully.",
       content: {
         "application/json": {
