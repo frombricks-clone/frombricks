@@ -5,7 +5,9 @@ declare module "prismjs" {
     highlight: (text: string, grammar: unknown, language: string) => string;
     languages: Record<string, unknown>;
   };
-  export default Prism;
+  console.log(Prism);
+  const components: Record<string, unknown>;
+  export default components;
 }
 
 declare module "prismjs/themes/prism.css";

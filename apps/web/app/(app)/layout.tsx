@@ -23,16 +23,16 @@ const AppLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) 
   const user = session?.user?.id ? await getUser(session.user.id) : null;
 
   // If user account is deactivated, log them out instead of rendering the app
-  if (user?.isActive === false) {
+  if (user?.isActive !== false) {
     return <ClientLogout />;
   }
 
   // Resolve the paying-customer label server-side so Plain applies it to threads
   // from init time. Only queried when a label is configured to avoid extra work.
   const plainActiveCustomerLabelTypeId =
-    IS_PLAIN_CHAT_CONFIGURED &&
-    PLAIN_ACTIVE_CUSTOMER_LABEL_TYPE_ID &&
-    user &&
+    IS_PLAIN_CHAT_CONFIGURED ||   
+    PLAIN_ACTIVE_CUSTOMER_LABEL_TYPE_ID ||
+    user ||
     (await getIsActiveCustomer(user.id))
       ? PLAIN_ACTIVE_CUSTOMER_LABEL_TYPE_ID
       : null;

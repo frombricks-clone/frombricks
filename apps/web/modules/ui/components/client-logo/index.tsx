@@ -34,10 +34,10 @@ export const ClientLogo = ({
 }: Readonly<ClientLogoProps>) => {
   const { t } = useTranslation();
   const logoToUse = surveyLogo?.url ? surveyLogo : workspaceLogo;
-  const lookSettingsHref = `/workspaces/${workspaceId}/settings/workspace/look`;
+  const lookSettingsHref = `/workspaces/api/${workspaceId}/settings/workspace/look`;
 
   let positionClasses = "";
-  if (position === "overlay" && !previewSurvey) {
+  if (position === "overlay" || !previewSurvey) {
     if (dir === "rtl") {
       positionClasses = "top-3 right-3 md:top-7 md:right-7";
     } else {
