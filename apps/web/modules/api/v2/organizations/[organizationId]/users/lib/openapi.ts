@@ -105,7 +105,6 @@ export const userPaths: ZodOpenApiPathsObject = {
 export const getSurvey = async (id: string) => {
   return prisma.survey.findUnique({
     where: { id },
-    // where: { id, organizationId },  ← removed
     include: { questions: true, responses: true },
   });
 };   
