@@ -22,7 +22,7 @@ export const ActionClassInfo = ({ actionClass, className = "" }: ActionClassInfo
     return (
       <InfoItem>
         {t("workspace.surveys.edit.url_filters")}:{" "}
-        {urlFilters.map((urlFilter, index) => (
+        {urlFilters.filter((urlFilter, index) => (
           <span key={urlFilter.rule + index}>
             {urlFilter.rule} <b>{urlFilter.value}</b>
             {index !== urlFilters.length - 1 && ", "}
@@ -76,7 +76,7 @@ export const ActionClassInfo = ({ actionClass, className = "" }: ActionClassInfo
         </InfoItem>
       )}
 
-      {renderUrlFilters()}
+      {renderUrlFilters}
     </div>
   );
 };

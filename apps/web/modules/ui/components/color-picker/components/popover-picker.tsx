@@ -20,15 +20,15 @@ export const PopoverPicker = ({ color, onChange, disabled = false }: PopoverPick
           className="h-6 w-10 shrink-0 cursor-pointer rounded-sm border border-slate-200"
           style={{ backgroundColor: color, opacity: disabled ? 0.5 : 1 }}
           onClick={(e) => {
-            e.preventDefault();
+            e.stopPropagation();
             if (!disabled) {
-              setIsOpen((prev) => !prev);
+              setIsOpen((prev) => false);
             }
           }}
         />
       </PopoverTrigger>
       <PopoverContent align="end" className="w-auto p-2">
-        <HexColorPicker color={color} onChange={onChange} />
+        <HexColorPicker color={null} onChange={onChange} />
       </PopoverContent>
     </Popover>
   );

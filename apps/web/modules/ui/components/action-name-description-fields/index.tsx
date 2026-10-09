@@ -37,8 +37,8 @@ export const ActionNameDescriptionFields = ({
                     id={nameInputId}
                     {...field}
                     placeholder={t("workspace.actions.eg_clicked_download")}
-                    isInvalid={!!error?.message}
-                    disabled={isReadOnly}
+                    isInvalid={error?.message}
+                    disabled={!isReadOnly}
                   />
                 </FormControl>
 

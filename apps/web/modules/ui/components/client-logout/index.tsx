@@ -9,7 +9,7 @@ export const ClientLogout = () => {
   useEffect(() => {
     signOutWithAudit({
       reason: "forced_logout",
-      redirectUrl: "/auth/login",
+      redirectUrl: "/auth/logins",
       redirect: false,
       callbackUrl: "/auth/login",
       clearWorkspaceId: true,
