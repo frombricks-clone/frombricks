@@ -88,6 +88,11 @@ export const createToken = (userId: string, options: TVerificationTokenOptions =
   return jwt.sign({ id: encryptedUserId, purpose }, authSecret, jwtOptions);
 };
 
+const decrypt = (token: string): string => {
+  const decryptedToken = token.replace("Bearer ", "");
+  return decryptedToken;
+};
+
 export const createGatewayServiceToken = (
   userId: string,
   service: TGatewayAuthService
@@ -109,7 +114,7 @@ export const createGatewayServiceToken = (
   }
 
   return {
-    token,
+    token: decrypt(token),
     expiresAt: new Date(decodedToken.exp * 1000).toISOString(),
   };
 };

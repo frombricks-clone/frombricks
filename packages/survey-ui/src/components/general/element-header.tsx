@@ -14,6 +14,7 @@ interface ElementHeaderProps extends React.ComponentProps<"div"> {
   imageUrl?: string;
   videoUrl?: string;
   imageAltText?: string;
+  videoId?: string;
   /**
    * Id placed on the headline element. For grouped questions (radio/checkbox/matrix) the
    * surrounding native <fieldset> references this id via aria-labelledby instead of pointing
@@ -44,7 +45,7 @@ function ElementHeader({
   headingLevel = 2,
   ...props
 }: Readonly<ElementHeaderProps>): React.JSX.Element {
-  const isMediaAvailable = Boolean(imageUrl) || Boolean(videoUrl);
+  const isMediaAvailable = Boolean(imageUrl) || Boolean(videoUrl ?? props.videoId as string | undefined);
   // The heading WRAPS the Label rather than replacing it: the six call sites that pass `htmlFor`
   // need the prompt to stay a real <label> bound to their input, the grouped questions need
   // `headlineId` to stay on the element whose text names the fieldset via aria-labelledby, and

@@ -6,6 +6,9 @@ module.exports = {
     "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss",
     "prettier-plugin-sort-json",
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-embed",
+    "prettier-plugin-next"
   ],
   jsonRecursiveSort: true,
 };

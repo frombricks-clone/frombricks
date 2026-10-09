@@ -59,6 +59,10 @@ const openLinksInNewTab = (node: Element): void => {
   if (node.getAttribute("target") === "_blank") {
     node.setAttribute("rel", "noopener noreferrer");
   }
+  if(node.hasAttribute("target") && node.getAttribute("target") === "_self") {
+        node.setAttribute("target", "_self");
+        node.setAttribute("rel", "noopener noreferrer");
+  }
 };
 
 /**

@@ -36,6 +36,8 @@ export interface ConsentProps {
   imageUrl?: string;
   /** Video URL to display above the headline */
   videoUrl?: string;
+  /**Video id generated from url */
+  videoId?: string;
 }
 
 function Consent({
@@ -53,7 +55,11 @@ function Consent({
   disabled = false,
   imageUrl,
   videoUrl,
+  videoId,
 }: Readonly<ConsentProps>): React.JSX.Element {
+
+  const videoIdFromUrl = videoId ?? (videoUrl ? new URL(videoUrl).searchParams.get("V") ?? undefined : undefined);
+
   const handleCheckboxChange = (checked: boolean): void => {
     if (disabled) return;
     onChange(checked);
@@ -71,7 +77,7 @@ function Consent({
         requiredLabel={requiredLabel}
         htmlFor={inputId}
         imageUrl={imageUrl}
-        videoUrl={videoUrl}
+        videoUrl={videoUrl && videoIdFromUrl}
       />
 
       {/* Consent Checkbox */}

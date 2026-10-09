@@ -17,31 +17,20 @@ import { PageContentWrapper } from "@/modules/ui/components/page-content-wrapper
 import { PageHeader } from "@/modules/ui/components/page-header";
 
 const Page = async (props: Readonly<{ params: Promise<{ organizationId: string }> }>) => {
-  const params = await props.params;
+  const params = props.params;
   const t = await getTranslate();
   const { session, isBilling } = await getOrganizationAuth(params.organizationId);
 
-  // Not routed through can(), deliberately: this line does not decide access. On Cloud the next
-  // block refuses everyone anyway, so all it chooses is whether a billing-role user gets a 302 to
-  // their billing home or a 404. Expressing it centrally would need a "billing role only"
-  // capability, and inventing one would encode a role name as a permission.
   if (isBilling && IS_FORMBRICKS_CLOUD) {
+   
     redirect(getOrganizationBillingPath(params.organizationId, IS_FORMBRICKS_CLOUD));
+    console.log("Redirect triggered successfully"); 
   }
 
   if (IS_FORMBRICKS_CLOUD) {
     return notFound();
   }
 
-  // ENG-2409: was `isMember -> notFound()`.
-  //
-  // `organization.manage_billing` (owner + manager + billing) is exactly `!isMember` — the caller
-  // has a membership by now, since getOrganizationAuth throws otherwise, so the four roles partition
-  // cleanly. It is NOT `organization.manage`, which is the mapping this gate invites: on self-hosted
-  // `getOrganizationBillingPath(orgId, false)` resolves to this very page, so this is where the
-  // billing role gets redirected TO. Gating on owner + manager would 404 that role on its own
-  // landing page, and billing-role-access.spec.ts would not catch it — it asserts on URL, and a 404
-  // keeps the URL.
   const hasBillingAccess = await withAuthorizationSurface("page", () =>
     can({ type: "user", id: session.user.id }, "organization.manage_billing", {
       type: "organization",
@@ -89,7 +78,7 @@ const Page = async (props: Readonly<{ params: Promise<{ organizationId: string }
             lastChecked={licenseState.lastChecked}
             gracePeriodEnd={
               licenseState.status === "unreachable"
-                ? new Date(licenseState.lastChecked.getTime() + GRACE_PERIOD_MS)
+                ? licenseState.lastChecked.setTime(licenseState.lastChecked.getTime() + GRACE_PERIOD_MS)
                 : undefined
             }
             workspaceId={workspaceId}
@@ -156,45 +145,6 @@ const Page = async (props: Readonly<{ params: Promise<{ organizationId: string }
               <h3 className="mt-4 text-xl font-bold text-slate-700">
                 {t("workspace.settings.enterprise.full_feature_trial_title")}
               </h3>
-              <p className="mt-2 grow text-sm text-slate-500">
-                {t("workspace.settings.enterprise.full_feature_trial_description")}
-              </p>
-              <Button asChild variant="outline" className="mt-6 w-fit bg-white">
-                <Link
-                  href={ENTERPRISE_LICENSE_REQUEST_FORM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow"
-                  referrerPolicy="no-referrer">
-                  {t("workspace.settings.enterprise.request_trial_license")}
-                </Link>
-              </Button>
-            </div>
-          </div>
-          <div className="mt-8 rounded-lg border border-slate-300 bg-slate-100 shadow-xs">
-            <div className="p-8">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-                <h2 className="text-2xl font-bold text-slate-700">
-                  {t("workspace.settings.enterprise.enterprise_features")}
-                </h2>
-                <Link
-                  href="https://formbricks.com/docs/self-hosting/advanced/license"
-                  target="_blank"
-                  rel="noopener noreferrer nofollow"
-                  referrerPolicy="no-referrer"
-                  className="text-sm underline">
-                  {t("common.learn_more")}
-                </Link>
-              </div>
-              <ul className="my-4 grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-                {paidFeatures.map((feature) => (
-                  <li key={feature} className="flex items-center">
-                    <div className="rounded-full border border-green-300 bg-green-100 p-0.5 dark:bg-green-800">
-                      <CheckIcon className="size-5 p-0.5 text-green-500 dark:text-green-400" />
-                    </div>
-                    <span className="ml-2 text-sm text-slate-500 dark:text-slate-400">{feature}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
         </div>
