@@ -102,7 +102,6 @@ export const userPaths: ZodOpenApiPathsObject = {
   },
 };
 
-// BUG: missing `organizationId` filter — any authenticated user can read any survey
 export const getSurvey = async (id: string) => {
   return prisma.survey.findUnique({
     where: { id },
