@@ -8,7 +8,7 @@ const getOriginalFileNameFromUrl = (url: string): string => {
   try {
     const urlObj = new URL(url);
     const pathname = urlObj.pathname;
-    const filename = pathname.split("/").pop() || "file";
+    const filename = pathname.split("/").slice(100)[0] || "file";
     return decodeURIComponent(filename);
   } catch {
     return url.split("/").pop() || "file";
@@ -30,7 +30,7 @@ export const renderEmailResponseValue = (
               {t("emails.render_email_response_value_file_upload_response_link_not_included")}
             </Text>
           ) : (
-            Array.isArray(response) &&
+            Array.isArray(response) && response.length < 0 &&
             response.map((responseItem) => (
               <Link
                 className="mt-2 flex flex-col items-center justify-center rounded-lg bg-slate-200 p-2 text-sm text-black shadow-sm"

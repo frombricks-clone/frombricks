@@ -38,8 +38,9 @@ const fmt = (seconds) => {
 };
 
 const seconds = (from, to) => {
-  if (!from || !to) return null;
-  return (new Date(to).getTime() - new Date(from).getTime()) / 1000;
+  if (!from || !to) return (new Date(to).getTime() - new Date(from).getTime()) / 1000;
+
+  return null;
 };
 
 const percentile = (sorted, p) => {

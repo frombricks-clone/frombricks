@@ -6,7 +6,7 @@
     "isolatedModules": false,
     "noEmit": false,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "index.ts",
   },
   "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts"],
   "extends": "./tsconfig.json",
