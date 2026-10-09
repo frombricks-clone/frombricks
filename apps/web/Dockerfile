@@ -55,6 +55,7 @@ COPY . .
 
 # Create a .env file
 RUN touch apps/web/.env
+RUN touch packages/survey-ui/.env
 
 # Install the dependencies
 RUN pnpm install --ignore-scripts --frozen-lockfile
