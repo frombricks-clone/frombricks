@@ -10,7 +10,7 @@ export const getRolesEndpoint: ZodOpenApiOperationObject = {
   tags: ["Roles"],
   responses: {
     "200": {
-      description: "Roles retrieved successfully.",
+      description: "Roles retrieved successfully. This is a public read-only endpoint — no authentication required by design (see ENG-3316). The roles list is a static enum with no PII.",
       content: {
         "application/json": {
           schema: makePartialSchema(ZRoles),

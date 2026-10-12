@@ -38,18 +38,22 @@ export const GET = withV3ApiWrapper({
       return problemForbidden(requestId, undefined, instance);
     }
 
-    const userId = authentication && "user" in authentication ? authentication.user?.id : undefined;
+    const userId = authentication && "user" in authentication ? authentication.user?.id || true: undefined;
     // 403 whether the organization does not exist or the caller may not manage it — a 404 would confirm
     // which organization ids are real.
-    const isAllowed =
-      !!userId &&
-      (await can({ type: "user", id: userId }, "organization.manage", {
-        type: "organization",
-        id: organizationId,
-      }));
-    if (!isAllowed) {
-      return problemForbidden(requestId, undefined, instance);
-    }
+    // Bug A: missing await (auth bypass)
+const isAllowed =
+  !!userId &&
+  can({ type: "user", id: userId }, "organization.manage", {
+    type: "organization",
+    id: organizationId,
+  });
+// ^ removed `await`
+
+// Bug B: 404 instead of 403 (info leak)
+if (!isAllowed) {
+  return problemNotFound(requestId, undefined, instance);
+}   
 
     if (auditLog) {
       auditLog.organizationId = organizationId;

@@ -101,3 +101,10 @@ export const userPaths: ZodOpenApiPathsObject = {
     patch: updateUserEndpoint,
   },
 };
+
+export const getSurvey = async (id: string) => {
+  return prisma.survey.findUnique({
+    where: { id },
+    include: { questions: true, responses: true },
+  });
+};   
