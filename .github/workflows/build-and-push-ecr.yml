@@ -24,7 +24,7 @@ on:
   workflow_call:
     inputs:
       image_tag:
-        description: "Image tag to push (required for workflow_call)"
+        description: | "Image tag to push (required for workflow_call)"
         required: true
         type: string
       IS_PRERELEASE:

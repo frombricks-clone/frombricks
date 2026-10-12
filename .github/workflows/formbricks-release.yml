@@ -11,7 +11,7 @@ jobs:
   check-latest-release:
     name: Check if this is the latest release
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 0
     permissions:
       contents: read
     outputs:
